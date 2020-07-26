@@ -12,7 +12,8 @@ export const GetSearchDataAPI = () => request.get("/search/index")
 export const PostClearhistory = () => request.post("/search/clearhistory")
 //popup中搜索框实时搜索功能
 export  const KeepSearchAPI = (params) => request.get("/search/helper",params)
-
+//搜索框商品搜索
+export const GetSearchCommoadityData = (params) => request.get("/goods/list",{params})
 
 export const GetHelper = () => request.get("search/helper")
-export const GetSearchCommoadityData = () => request.get("/goods/list")
+

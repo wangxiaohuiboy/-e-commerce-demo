@@ -6,7 +6,12 @@
           <h4>历史记录</h4>
           <van-icon @click="deleteHistory" size="20px" name="delete" />
         </div>
-        <van-tag v-for="(item,index) in historyKeywordList" :key="index" plain>{{item}}</van-tag>
+        <van-tag
+          @click="totag(item)"
+          v-for="(item,index) in historyKeywordList"
+          :key="index"
+          plain
+        >{{item}}</van-tag>
       </div>
     </div>
     <div class="hot-search">
@@ -15,6 +20,7 @@
           <h4>热门搜索</h4>
         </div>
         <van-tag
+          @click="totag(item.keyword)"
           v-for="(item,index) in hotKeywordList"
           :key="index"
           :type="item.is_hot==1?'danger':'default'"
@@ -26,13 +32,14 @@
 </template>
  
 <script>
-import {GetSearchDataAPI,PostClearhistory} from "@/request/api"
+import { GetSearchDataAPI, PostClearhistory } from "@/request/api";
 export default {
+  props:["userSerachtxt"],
   data() {
     return {
       historyKeywordList: [],
       hotKeywordList: [],
-      ifShowHistory:true
+      ifShowHistory: true,
     };
   },
   created() {
@@ -43,21 +50,25 @@ export default {
       this.historyKeywordList = historyKeywordList;
       this.hotKeywordList = hotKeywordList;
       //修改Index.vue中的plcaeholder
-      this.$emit("changePlcaeholder",defaultKeyword.keyword)
+      this.$emit("changePlcaeholder", defaultKeyword.keyword);
     });
   },
   methods: {
     //点击删除历史记录
     deleteHistory() {
       // this.$store.commit("deleteHistorys", false);
-      PostClearhistory().then((res)=>{
-        if(res.errno==0){
+      PostClearhistory().then((res) => {
+        if (res.errno == 0) {
           this.$toast.success("删除成功");
-          setTimeout(()=>{
+          setTimeout(() => {
             this.ifShowHistory = false;
-          },400)
+          }, 400);
         }
-      })
+      });
+    },
+    // 点击搜索相关商品
+    totag(arg){
+      this.$emit("goSearch",arg)
     },
   },
 };

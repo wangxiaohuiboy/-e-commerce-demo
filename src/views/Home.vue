@@ -9,9 +9,11 @@
       @click="openPopup"
     />
     <transition name="fade">
-      <div class="popup_bg" v-if="$store.state.showpopup"></div>
+      <div class="popup_bg" v-if="$store.state.search.showpopup"></div>
     </transition>
-    
+     <transition name="silde">
+      <router-view></router-view>
+    </transition>
     <van-swipe class="my-swipe" :autoplay="3000">
       <van-swipe-item v-for="item in banner" :key="item.id">
         <img :src="item.image_url" width="100%" style="display:block" alt />
@@ -53,13 +55,25 @@ export default {
   },
   methods: {
     openPopup() {
-      this.$router.push("/popup");
+      this.$router.push("/home/popup");
       this.$store.commit("changeShowpopup", true);
     },
   },
 };
 </script>
 <style lang="less" scoped>
+.silde-enter,
+.silde-leave-to {
+  right: -100%;
+}
+.silde-enter-active,
+.silde-leave-active {
+  transition: right 0.4s linear;
+}
+.silde-enter-to,
+.silde-leave {
+  right: 0;
+}
 .popup_bg {
   width: 100%;
   height: 100%;
@@ -67,6 +81,7 @@ export default {
   position: fixed;
   top: 0;
   left: 0;
+  z-index:8;
 }
 .fade-enter,
 .fade-leave-to {
@@ -74,7 +89,7 @@ export default {
 }
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.5s linear;
+  transition: opacity 0.4s linear;
 }
 .fade-enter-to,
 .fade-leave {

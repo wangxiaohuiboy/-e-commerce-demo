@@ -13,9 +13,9 @@
         </template>
       </van-search>
     </form>
-    <HistoryHot v-if="blockShow==1" @changePlcaeholder="FachangePlcaeholder" />
-    <List :listArr="listArr" v-else-if="blockShow==2" />
-    <ProductShow v-else />
+    <HistoryHot v-if="blockShow==1" @changePlcaeholder="FachangePlcaeholder" @goSearch="goSearch" />
+    <List @goSearch="goSearch" :listArr="listArr" v-else-if="blockShow==2" />
+    <ProductShow :filterCategory="filterCategory" :goodList="goodList" v-else />
   </div>
 </template>
  
@@ -23,7 +23,7 @@
 import HistoryHot from "@/components/popup/HistoryHot";
 import List from "@/components/popup/List";
 import ProductShow from "@/components/popup/ProductShow";
-import { KeepSearchAPI } from "@/request/api";
+import { KeepSearchAPI, GetSearchCommoadityData } from "@/request/api";
 export default {
   components: {
     HistoryHot,
@@ -33,9 +33,15 @@ export default {
   data() {
     return {
       value: "",
-      blockShow: 3,
+      // 1代表历史热门，2代表列表，3代表产品展示
+      blockShow: 1,
       placeholder: "",
-      listArr:[]
+      //list组件的数组
+      listArr: [],
+      //商品数组
+      goodList: [],
+      //分类数组
+      filterCategory: [],
     };
   },
 
@@ -46,7 +52,33 @@ export default {
     this.$store.commit("GetSearchData", this.value);
   },
   methods: {
-    onSearch() {},
+    //从点击标签执行的搜索
+    goSearch(arg) {
+      this.value = arg;
+      this.goodSearch();
+    },
+    //搜索，用户敲回车
+    onSearch() {
+      this.goodSearch();
+    },
+    // 封装一个搜索事件
+    goodSearch() {
+      GetSearchCommoadityData({
+        keyword: this.value,
+      }).then((res) => {
+        console.log(res.data);
+        let { goodsList, filterCategory } = res.data;
+        this.goodList = goodsList;
+        //替换数组中的name和id
+        this.filterCategory = JSON.parse(
+          JSON.stringify(filterCategory)
+            .replace(/name/g, "text")
+            .replace(/id/g, "value")
+        );
+        this.blockShow = 3;
+        console.log(this.filterCategory);
+      });
+    },
     // 点击了取消按钮
     onCancel() {
       // 关闭popup，跳回上一个界面
@@ -68,7 +100,7 @@ export default {
         },
       }).then((res) => {
         if (res.errno == 0) {
-          this.listArr = res.data
+          this.listArr = res.data;
         }
       });
     },
@@ -79,7 +111,7 @@ export default {
 <style lang = "less" scoped>
 .popup {
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   position: absolute;
   /* right: 0; */
   top: 0;
