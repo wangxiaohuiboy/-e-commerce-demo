@@ -14,12 +14,10 @@ const routes = [
     path: '/home',
     name: 'Home',
     component: Home,
-    children: [
-      {
-        path: "popup",
-        component: () => import("@/components/popup/index.vue")
-      }
-    ]
+  },
+  {
+    path: "/popup",
+    component: () => import("@/components/popup/index.vue")
   },
   {
     path: "*",
