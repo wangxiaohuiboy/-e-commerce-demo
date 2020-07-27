@@ -11,8 +11,10 @@
     <transition name="fade">
       <div class="popup_bg" v-if="$store.state.search.showpopup"></div>
     </transition>
-     <transition name="silde">
-      <router-view></router-view>
+    <transition name="silde">
+      <keep-alive>
+        <router-view></router-view>
+      </keep-alive>
     </transition>
     <van-swipe class="my-swipe" :autoplay="3000">
       <van-swipe-item v-for="item in banner" :key="item.id">
@@ -20,23 +22,34 @@
       </van-swipe-item>
     </van-swipe>
     <channel :channel="channel" />
+    <Brand :brandList="brandList" />
+    <New :newGoodsList="newGoodsList" />
+    <Hot :hotGoodsList="hotGoodsList" />
   </div>
-  
 </template>
 
 <script>
 import Channel from "@/components/home/Channel";
+import Brand from "@/components/home/Brand";
+import New from "@/components/home/New";
+import Hot from "@/components/home/Hot";
 import { GetHomeDataAPI } from "@/request/api.js";
 export default {
   name: "Home",
   components: {
     Channel,
+    Brand,
+    New,
+    Hot
   },
   data() {
     return {
       value: "",
       banner: [],
-      channel:[]
+      channel: [],
+      brandList: [],
+      newGoodsList:[],
+      hotGoodsList:[],
     };
   },
   created() {
@@ -44,14 +57,16 @@ export default {
     GetHomeDataAPI().then((res) => {
       //当errno为0时，代表请求成功，这时候直接拿最里面的data
       if (res.errno == 0) {
-        let { banner,channel } = res.data;
+        let { banner, channel, brandList,newGoodsList,hotGoodsList } = res.data;
         // console.log(res);
         this.banner = banner;
         this.channel = channel;
+        this.brandList = brandList;
+        this.newGoodsList =newGoodsList;
+        this.hotGoodsList=hotGoodsList
+        console.log(res.data);
       }
-    }
-    
-    );
+    });
   },
   methods: {
     openPopup() {
@@ -62,6 +77,9 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+.home {
+  padding-bottom: 60px;
+}
 .silde-enter,
 .silde-leave-to {
   right: -100%;
@@ -81,7 +99,7 @@ export default {
   position: fixed;
   top: 0;
   left: 0;
-  z-index:8;
+  z-index: 8;
 }
 .fade-enter,
 .fade-leave-to {

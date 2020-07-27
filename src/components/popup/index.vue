@@ -15,7 +15,13 @@
     </form>
     <HistoryHot v-if="blockShow==1" @changePlcaeholder="FachangePlcaeholder" @goSearch="goSearch" />
     <List @goSearch="goSearch" :listArr="listArr" v-else-if="blockShow==2" />
-    <ProductShow :filterCategory="filterCategory" :goodList="goodList" v-else />
+    <ProductShow
+      @categroyResearch="categroyResearch"
+      @priceResearch="priceResearch"
+      :filterCategory="filterCategory"
+      :goodList="goodList"
+      v-else
+    />
   </div>
 </template>
  
@@ -42,6 +48,16 @@ export default {
       goodList: [],
       //分类数组
       filterCategory: [],
+      // 请求的页数
+      page: 1,
+      // 请求的个数
+      size: 20,
+      //价格排序
+      order: "desc",
+      // 按照id或者price排序
+      sort: "id",
+      //分类id
+      categoryId: 0,
     };
   },
 
@@ -61,10 +77,26 @@ export default {
     onSearch() {
       this.goodSearch();
     },
+    // 按照价格重新搜索
+    priceResearch(arg) {
+      this.order = arg;
+      this.sort = "price";
+      this.goodSearch();
+    },
+    // 分类改变，重新搜索
+    categroyResearch(arg) {
+      this.categoryId = arg;
+      this.goodSearch();
+    },
     // 封装一个搜索事件
     goodSearch() {
       GetSearchCommoadityData({
         keyword: this.value,
+        page: this.page,
+        size: this.size,
+        order: this.order,
+        categoryId: this.categoryId,
+        sort: this.sort,
       }).then((res) => {
         console.log(res.data);
         let { goodsList, filterCategory } = res.data;
