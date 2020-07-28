@@ -14,6 +14,8 @@ export const PostClearhistory = () => request.post("/search/clearhistory")
 export  const KeepSearchAPI = (params) => request.get("/search/helper",params)
 //搜索框商品搜索
 export const GetSearchCommoadityData = (params) => request.get("/goods/list",{params})
-
-export const GetHelper = () => request.get("search/helper")
+//专题页数据
+export const GetTopicApi = (params) => request.get("/topic/list",{params})
+//登陆注册
+export const LoginRegisterApI = (params) => request.post("/auth/loginByWeb",params)
 

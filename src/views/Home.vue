@@ -1,30 +1,35 @@
 <template>
   <div class="home">
-    <van-search
-      v-model="value"
-      shape="round"
-      background="#4fc08d"
-      disabled
-      placeholder="请输入搜索关键词"
-      @click="openPopup"
-    />
-    <transition name="fade">
-      <div class="popup_bg" v-if="$store.state.search.showpopup"></div>
-    </transition>
-    <transition name="silde">
-      <keep-alive>
-        <router-view></router-view>
-      </keep-alive>
-    </transition>
-    <van-swipe class="my-swipe" :autoplay="3000">
-      <van-swipe-item v-for="item in banner" :key="item.id">
-        <img :src="item.image_url" width="100%" style="display:block" alt />
-      </van-swipe-item>
-    </van-swipe>
-    <channel :channel="channel" />
-    <Brand :brandList="brandList" />
-    <New :newGoodsList="newGoodsList" />
-    <Hot :hotGoodsList="hotGoodsList" />
+    <div v-if="tagym">
+      <van-search
+        v-model="value"
+        shape="round"
+        background="#4fc08d"
+        disabled
+        placeholder="请输入搜索关键词"
+        @click="openPopup"
+      />
+      <van-swipe class="my-swipe" :autoplay="3000">
+        <van-swipe-item v-for="item in banner" :key="item.id">
+          <img :src="item.image_url" width="100%" style="display:block" alt />
+        </van-swipe-item>
+      </van-swipe>
+      <channel :channel="channel" />
+      <Brand :brandList="brandList" />
+      <New :newGoodsList="newGoodsList">周一周四·新品首发</New>
+      <Hot :hotGoodsList="hotGoodsList" />
+      <Topic :topicList="topicList" />
+      <New :newGoodsList="item.goodsList" v-for="item in categoryList" :key="item.id">{{item.name}}</New>
+      <transition name="fade">
+        <div class="popup_bg" v-if="$store.state.search.showpopup"></div>
+      </transition>
+    </div>
+
+    <div v-else>
+      <transition name="slide">
+        <router-view @changetag="fnchangetag" />
+      </transition>
+    </div>
   </div>
 </template>
 
@@ -33,6 +38,7 @@ import Channel from "@/components/home/Channel";
 import Brand from "@/components/home/Brand";
 import New from "@/components/home/New";
 import Hot from "@/components/home/Hot";
+import Topic from "@/components/home/Topic";
 import { GetHomeDataAPI } from "@/request/api.js";
 export default {
   name: "Home",
@@ -40,7 +46,8 @@ export default {
     Channel,
     Brand,
     New,
-    Hot
+    Hot,
+    Topic,
   },
   data() {
     return {
@@ -48,8 +55,11 @@ export default {
       banner: [],
       channel: [],
       brandList: [],
-      newGoodsList:[],
-      hotGoodsList:[],
+      newGoodsList: [],
+      hotGoodsList: [],
+      topicList: [],
+      categoryList: [],
+      tagym: true,
     };
   },
   created() {
@@ -57,13 +67,23 @@ export default {
     GetHomeDataAPI().then((res) => {
       //当errno为0时，代表请求成功，这时候直接拿最里面的data
       if (res.errno == 0) {
-        let { banner, channel, brandList,newGoodsList,hotGoodsList } = res.data;
+        let {
+          banner,
+          channel,
+          brandList,
+          newGoodsList,
+          hotGoodsList,
+          topicList,
+          categoryList,
+        } = res.data;
         // console.log(res);
         this.banner = banner;
         this.channel = channel;
         this.brandList = brandList;
-        this.newGoodsList =newGoodsList;
-        this.hotGoodsList=hotGoodsList
+        this.newGoodsList = newGoodsList;
+        this.hotGoodsList = hotGoodsList;
+        this.topicList = topicList;
+        this.categoryList = categoryList;
         console.log(res.data);
       }
     });
@@ -71,7 +91,11 @@ export default {
   methods: {
     openPopup() {
       this.$router.push("/home/popup");
+      this.tagym = !this.tagym;
       this.$store.commit("changeShowpopup", true);
+    },
+    fnchangetag() {
+      this.tagym = true;
     },
   },
 };
@@ -80,21 +104,21 @@ export default {
 .home {
   padding-bottom: 60px;
 }
-.silde-enter,
-.silde-leave-to {
+.slide-enter,
+.slide-leave-to {
   right: -100%;
 }
-.silde-enter-active,
-.silde-leave-active {
+.slide-enter-active,
+.slide-leave-active {
   transition: right 0.4s linear;
 }
-.silde-enter-to,
-.silde-leave {
+.slide-enter-to,
+.slide-leave {
   right: 0;
 }
 .popup_bg {
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   background: rgba(0, 0, 0, 0.7);
   position: fixed;
   top: 0;

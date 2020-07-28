@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <!-- 如果不是popup页面，就用下面这一条 -->
-    <router-view v-if="ifShowNavBar"></router-view>
-    <NavBar />
+    <router-view ></router-view>
+    <NavBar v-if="ifShowNavBar" />
   </div>
 </template>
 <script>
@@ -29,6 +29,7 @@ html,
   background: #efefef;
   width: 100%;
   min-height: 100%;
+  overflow-x: hidden;
   color: #000;
   font-size: 14px;
   font-family: microsoft yahei;

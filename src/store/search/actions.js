@@ -1,4 +1,4 @@
-import { GetSearchDataAPI, PostClearhistory, GetHelper,GetSearchCommoadityData } from "@/request/api.js";
+import { GetSearchDataAPI, PostClearhistory,GetSearchCommoadityData } from "@/request/api.js";
 export default {
     GetMessage(context) {
         GetSearchDataAPI().then((res) => {
@@ -10,10 +10,6 @@ export default {
         PostClearhistory().then((res) => {
             //获取清除历史记录的post请求
             console.log(res.errno);
-        });
-        // 搜索功能
-        GetHelper().then((res) => {
-            console.log(res.data);
         });
         //获取搜索框商品数据
         GetSearchCommoadityData().then((res)=>{

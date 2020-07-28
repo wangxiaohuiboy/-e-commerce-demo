@@ -14,4 +14,7 @@ export default {
 </script>
  
 <style lang = "less" scoped>
+.van-grid{
+  width: 100%;
+}
 </style>

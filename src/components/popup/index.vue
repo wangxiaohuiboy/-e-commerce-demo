@@ -60,10 +60,6 @@ export default {
       categoryId: 0,
     };
   },
-
-  beforeCreate() {
-    this.$store.dispatch("GetMessage");
-  },
   updated() {
     this.$store.commit("GetSearchData", this.value);
   },
@@ -117,6 +113,8 @@ export default {
       this.$router.back();
       //关闭弹出层的背景
       this.$store.commit("changeShowpopup", false);
+      // 修改切换的页面
+      this.$emit("changetag")
     },
     //修改placeholder
     FachangePlcaeholder(arg) {
@@ -145,7 +143,6 @@ export default {
   width: 100%;
   min-height: 100%;
   position: absolute;
-  /* right: 0; */
   top: 0;
   background: #efefef;
   z-index: 9;

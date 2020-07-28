@@ -24,6 +24,7 @@ export default {
  
 <style lang = "less" scoped>
  .brand{
+     width: 100%;
      text-align: center;
      background: #fff;
      margin-top: 20px;

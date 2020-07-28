@@ -1,6 +1,6 @@
 export default {
     //弹出背景层
-    showpopup: false,
+    showpopup: true,
     //热门搜索数据
     hotKeywordList: [],
     //历史记录数据

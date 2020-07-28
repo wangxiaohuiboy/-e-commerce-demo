@@ -14,15 +14,15 @@ const routes = [
     path: '/home',
     name: 'Home',
     component: Home,
-    meta: {
-      num: 0
-    },
     children: [
       {
-        path: "popup",
-        component: () => import("@/components/popup/index.vue")
+        path: 'popup',
+        component: ()=>import('@/components/popup/Index.vue')
       }
-    ]
+    ],
+    meta: {
+      num: 0
+    }
   },
   {
     path: "/topic",

@@ -30,6 +30,7 @@ export default {
  
 <style lang = "less" scoped>
 .van-tabbar{
-  width: 100%;
+  width: 375px;
+  overflow: hidden;
 }
 </style>
