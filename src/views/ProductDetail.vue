@@ -174,9 +174,10 @@ export default {
             top: 10px;
         }
         .down{
+            margin-top: 50px;
             h3{
-                height: 80px;
-                line-height: 80px;
+                height: 50px;
+                line-height: 50px;
             }
         }
     }

@@ -24,4 +24,8 @@ export const GetCategoryAPI = (params) => request.get("/goods/category", { param
 export const GetProductAPI = (params) => request.get("/goods/list", { params });
 // 产品明细
 export const GetdetailAPI = (params) => request.get("/goods/detail", { params });
+// 品牌详情
+export const GetLBranDtailsAPI = (params) => request.get("/brand/detail",{params})
+// 品牌详情中的产品列表
+export const GetBranDetailsGoodlistAPI = (params) => request.get("/goods/list",{params})
 

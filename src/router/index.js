@@ -62,6 +62,10 @@ const routes = [
     component: () => import("@/views/ProductDetail.vue")
   },
   {
+    path: "/manufacturer/:id?",
+    component: () => import("@/components/Manufacturer.vue")
+  },
+  {
     path: "*",
     component: () => import("@/views/404.vue")
   }
