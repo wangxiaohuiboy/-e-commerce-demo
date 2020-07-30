@@ -1,6 +1,6 @@
 <template>
   <van-grid column-num="5">
-    <van-grid-item v-for="item in channel" :key="item.id" :icon="item.icon_url" :text="item.name" />
+    <van-grid-item v-for="item in channel" :key="item.id" :icon="item.icon_url" :text="item.name" @click="cutClass(item.id)" />
   </van-grid>
 </template>
  
@@ -10,6 +10,11 @@ export default {
   data() {
     return {};
   },
+  methods:{
+    cutClass(id){
+      this.$router.push("/channel/"+id);
+    }
+  }
 };
 </script>
  

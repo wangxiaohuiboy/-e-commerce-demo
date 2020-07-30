@@ -1,33 +1,39 @@
 <template>
   <div class="home">
-    <div v-if="tagym">
-      <van-search
-        v-model="value"
-        shape="round"
-        background="#4fc08d"
-        disabled
-        placeholder="请输入搜索关键词"
-        @click="openPopup"
-      />
-      <van-swipe class="my-swipe" :autoplay="3000">
-        <van-swipe-item v-for="item in banner" :key="item.id">
-          <img :src="item.image_url" width="100%" style="display:block" alt />
-        </van-swipe-item>
-      </van-swipe>
-      <channel :channel="channel" />
-      <Brand :brandList="brandList" />
-      <New :newGoodsList="newGoodsList">周一周四·新品首发</New>
-      <Hot :hotGoodsList="hotGoodsList" />
-      <Topic :topicList="topicList" />
-      <New :newGoodsList="item.goodsList" v-for="item in categoryList" :key="item.id">{{item.name}}</New>
+    <transition name="fade1">
+      <div v-if="$route.path=='/home'">
+        <van-search
+          v-model="value"
+          shape="round"
+          background="#4fc08d"
+          disabled
+          placeholder="请输入搜索关键词"
+          @click="openPopup"
+        />
+        <van-swipe class="my-swipe" :autoplay="3000">
+          <van-swipe-item v-for="item in banner" :key="item.id">
+            <img :src="item.image_url" width="100%" style="display:block" alt />
+          </van-swipe-item>
+        </van-swipe>
+        <channel :channel="channel" />
+        <Brand :brandList="brandList" />
+        <New :newGoodsList="newGoodsList">周一周四·新品首发</New>
+        <Hot :hotGoodsList="hotGoodsList" />
+        <Topic :topicList="topicList" />
+        <New
+          :newGoodsList="item.goodsList"
+          v-for="item in categoryList"
+          :key="item.id"
+        >{{item.name}}</New>
+      </div>
+    </transition>
+
+    <div >
       <transition name="fade">
         <div class="popup_bg" v-if="$store.state.search.showpopup"></div>
       </transition>
-    </div>
-
-    <div v-else>
       <transition name="slide">
-        <router-view @changetag="fnchangetag" />
+        <router-view v-if="$route.path=='/home/popup'" />
       </transition>
     </div>
   </div>
@@ -91,11 +97,7 @@ export default {
   methods: {
     openPopup() {
       this.$router.push("/home/popup");
-      this.tagym = !this.tagym;
       this.$store.commit("changeShowpopup", true);
-    },
-    fnchangetag() {
-      this.tagym = true;
     },
   },
 };
@@ -103,6 +105,15 @@ export default {
 <style lang="less" scoped>
 .home {
   padding-bottom: 60px;
+}
+.fade1-leave{
+  opacity: 1;
+}
+.fade1-leave-active{
+  transition: opacity .5s linear;
+}
+.fade1-leave-to{
+  opacity: 0;
 }
 .slide-enter,
 .slide-leave-to {

@@ -3,7 +3,7 @@
     <div class="top" @click="loginFn">
       <van-image round width="80px" height="80px" :src="avatar" />
       <div class="right">
-        <h4>点击登陆</h4>
+        <h4>{{usernametxt}}</h4>
         <span>&gt;</span>
       </div>
     </div>
@@ -39,15 +39,16 @@
 </template>
  
 <script>
-// import {LoginRegisterApI} from "@/request/api"
+import { LoginRegisterApI } from "@/request/api";
 var avatar = require("@/assets/avatar.png");
 export default {
   data() {
     return {
       avatar: avatar,
       modal_show: false,
-       username: '',
-      password: '',
+      username: "",
+      password: "",
+      usernametxt: "点击登陆",
       arr: [
         {
           icon: "label-o",
@@ -97,22 +98,50 @@ export default {
     };
   },
   created() {
-    //   LoginRegisterApI({
-    //       username:,
-    //       pwd:,
-    //   }).then(res=>{
-    //   })
+    let userInfo2 = localStorage.getItem("userInfo");
+    console.log(userInfo2);
+    if (userInfo2) {
+      this.avatar = JSON.parse(userInfo2).avatar;
+      this.usernametxt = JSON.parse(userInfo2).username;
+    } else {
+      return;
+    }
   },
   methods: {
     close_modal() {
-        this.modal_show = false
+      this.modal_show = false;
     },
+    // 点击提交按钮
     onSubmit(values) {
-      console.log('submit', values);
+      let username = values["用户名"];
+      let pwd = values["密码"];
+      LoginRegisterApI({
+        username,
+        pwd,
+      }).then((res) => {
+        if (res.errno == 0) {
+          this.$toast("请求成功");
+          this.modal_show = false;
+          let { token, userInfo } = res.data;
+          localStorage.setItem("token", token);
+          let userInfo1 = JSON.stringify(userInfo);
+          localStorage.setItem("userInfo", userInfo1);
+          window.location.reload();
+        } else {
+          this.$toast("用户名或密码错误");
+        }
+      });
+      console.log("submit", values);
     },
-    loginFn(){
-        this.modal_show = true
-    }
+    loginFn() {
+      let token = localStorage.getItem("token");
+      if(token){
+        return;
+      }else{
+        this.modal_show = true;
+      }
+      
+    },
   },
 };
 </script>
@@ -150,7 +179,7 @@ export default {
     background: #fff;
     position: absolute;
     left: 50%;
-    margin-left:-45%;
+    margin-left: -45%;
     top: 40%;
     padding-top: 10px;
   }

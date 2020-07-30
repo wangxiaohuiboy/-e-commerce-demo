@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 //如果要在router中使用store，需要引入store
 import store from "@/store"
+import { Toast } from 'vant'
 Vue.use(VueRouter)
 
 const routes = [
@@ -17,7 +18,7 @@ const routes = [
     children: [
       {
         path: 'popup',
-        component: ()=>import('@/components/popup/Index.vue')
+        component: () => import('@/components/popup/Index.vue')
       }
     ],
     meta: {
@@ -53,6 +54,10 @@ const routes = [
     }
   },
   {
+    path: "/channel/:id",
+    component: () => import("@/views/ChannelPage.vue")
+  },
+  {
     path: "*",
     component: () => import("@/views/404.vue")
   }
@@ -67,6 +72,20 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   if (to.path == "/home") {
     store.commit("changeShowpopup", false);
+  }
+  // 去购物车页面，如果没有token，统一跳到用户页
+  if (to.path == "/cart") {
+    let token = localStorage.getItem("token");
+    if (token) {
+      next();
+      return;
+    } else {
+      Toast("请先登录");
+      setTimeout(() => {
+        next("/user")
+      }, 2000);
+      return;
+    }
   }
   next();
 })
