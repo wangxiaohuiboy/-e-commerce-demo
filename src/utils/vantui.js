@@ -1,6 +1,6 @@
 import Vue from 'vue';
 
-import { Search, Button, Swipe, SwipeItem, Grid, GridItem, Icon, Tag, Toast, DropdownMenu, DropdownItem, Image as VanImage, List, Cell, Empty, Tabbar, TabbarItem, Card, Pagination, Form, Field, Tab, Tabs } from 'vant';
+import { Search, Button, Swipe, SwipeItem, Grid, GridItem, Icon, Tag, Toast, DropdownMenu, DropdownItem, Image as VanImage, List, Cell, Empty, Tabbar, TabbarItem, Card, Pagination, Form, Field, Tab, Tabs,Col, Row, GoodsAction,GoodsActionIcon, GoodsActionButton,Stepper } from 'vant';
 
 Vue.use(Search);
 Vue.use(Button);
@@ -25,3 +25,9 @@ Vue.use(Form);
 Vue.use(Field);
 Vue.use(Tab);
 Vue.use(Tabs);
+Vue.use(Col);
+Vue.use(Row);
+Vue.use(GoodsAction);
+Vue.use(GoodsActionButton);
+Vue.use(GoodsActionIcon);
+Vue.use(Stepper);

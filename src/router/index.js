@@ -58,6 +58,10 @@ const routes = [
     component: () => import("@/views/ChannelPage.vue")
   },
   {
+    path: "/productdetail/:id?",
+    component: () => import("@/views/ProductDetail.vue")
+  },
+  {
     path: "*",
     component: () => import("@/views/404.vue")
   }

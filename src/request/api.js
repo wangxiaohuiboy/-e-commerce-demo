@@ -22,4 +22,6 @@ export const LoginRegisterApI = (params) => request.post("/auth/loginByWeb", par
 export const GetCategoryAPI = (params) => request.get("/goods/category", { params });
 // 分类页面商品列表请求
 export const GetProductAPI = (params) => request.get("/goods/list", { params });
+// 产品明细
+export const GetdetailAPI = (params) => request.get("/goods/detail", { params });
 

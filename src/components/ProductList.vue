@@ -1,6 +1,6 @@
 <template>
   <ul class="list">
-    <li v-for="item in goodList" :key="item.id">
+    <li v-for="item in goodList" :key="item.id" @click="goToProductDetail(item.id)">
       <img :src="item.list_pic_url" alt />
       <div>{{item.name}}</div>
       <p>{{item.retail_price|filterMoney}}</p>
@@ -14,6 +14,11 @@ export default {
   data() {
     return {};
   },
+  methods:{
+    goToProductDetail(id){
+      this.$router.push("/productdetail/"+id)
+    }
+  }
 };
 </script>
  

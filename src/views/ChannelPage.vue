@@ -35,12 +35,12 @@ export default {
   },
   methods: {
     tabsClick() {
-    //   let id = this.brotherCategory[this.active].id;
-    //   //   用户可以看到路由跳转
-    //   this.$router.push("/channel/" + id);
-    //   // 重新请求数据
-    //   this.GetCategory();
-    //   this.GetCategoryProduct();
+      let id = this.brotherCategory[this.active].id;
+      //   用户可以看到路由跳转
+      this.$router.push("/channel/" + id);
+      // 重新请求数据
+      this.GetCategory();
+      this.GetCategoryProduct();
     },
     // 分类数据获取
     GetCategory() {
