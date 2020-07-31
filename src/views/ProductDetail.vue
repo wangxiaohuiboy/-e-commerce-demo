@@ -11,7 +11,7 @@
       <div>{{info.goods_brief}}</div>
       <p>{{Number(info.retail_price)|filterMoney}}</p>
     </div>
-    <van-cell title="展示弹出层" is-link />
+    <van-cell title="展示弹出层" is-link @click="ifShowSku=!ifShowSku" />
     <div class="canshu">
       <h3>商品参数</h3>
       <ul v-for="item in attribute" :key="item.id">
@@ -23,34 +23,43 @@
     </div>
     <div class="box" ref="box"></div>
     <van-goods-action>
-      <van-goods-action-icon icon="star-o" text="已收藏" />
-      <van-goods-action-icon icon="cart-o" text="购物车" badge="5" />
-      <van-goods-action-button type="danger" text="立即购买" />
-      <van-goods-action-button type="warning" text="加入购物车" />
+      <van-goods-action-icon
+        :icon="cartLanObj.ifCollect?'star':'star-o'"
+        :text="cartLanObj.ifCollect?'已收藏':'收藏'"
+        :color="cartLanObj.ifCollect?'#4FC08D':'#666'"
+        @click="cartLanObj.ifCollect=!cartLanObj.ifCollect"
+      />
+      <van-goods-action-icon icon="cart-o" text="购物车" :badge="cartLanObj.badge" @click="GoToCart" />
+      <van-goods-action-button type="danger" text="立即购买" @click="buyNo" />
+      <van-goods-action-button type="warning" text="加入购物车" @click="addToCartFn" />
     </van-goods-action>
-    <div class="modal">
-        <div class="modal_bg"></div>
-        <div class="modal_content">
-            <van-icon class="close" name="cross" size="20px" />
-            <div class="top">
-                <img src="../assets/avatar.png" width="100" height="100" alt="">
-                <div class="right">
-                    <section>价格</section>
-                    <section>库存</section>
-                </div>
-            </div>
-            <div class="down">
-                <h3>数量</h3>
-                <van-stepper v-model="stepValue" />
-            </div>
+    <div class="modal" v-if="ifShowSku">
+      <div class="modal_bg" @click="ifShowSku=!ifShowSku"></div>
+      <div class="modal_content">
+        <van-icon class="close" name="cross" size="20px" @click="ifShowSku=!ifShowSku" />
+        <div class="top">
+          <img :src="info.list_pic_url" width="100" height="100" alt />
+          <div class="right">
+            <section>价格 : {{info.retail_price |filterMoney}}</section>
+            <section>库存 : {{info.goods_number}}</section>
+          </div>
         </div>
+        <div class="down">
+          <h3>数量</h3>
+          <van-stepper min="1" :max="info.goods_number" v-model="stepValue" />
+        </div>
+      </div>
     </div>
   </div>
 </template>
  
 <script>
 import Safeguard from "@/components/Safeguard";
-import { GetdetailAPI } from "@/request/api";
+import {
+  GetdetailAPI,
+  GetCartGoodsCountAPI,
+  AddToCartAPI,
+} from "@/request/api";
 export default {
   components: {
     Safeguard,
@@ -63,7 +72,17 @@ export default {
       info: [],
       //商品参数
       attribute: [],
-      stepValue:1
+      // 步进器
+      stepValue: 1,
+      //sku的显示隐藏
+      ifShowSku: false,
+      // 购物车和收藏
+      cartLanObj: {
+        ifCollect: false,
+        badge: 0,
+      },
+      // productList
+      productList: [],
     };
   },
   created() {
@@ -71,13 +90,47 @@ export default {
       id: this.$route.params.id,
     }).then((res) => {
       if (res.errno == 0) {
-        let { gallery, info, attribute } = res.data;
+        let { gallery, info, attribute, productList } = res.data;
         this.gallery = gallery;
         this.info = info;
         this.attribute = attribute;
         this.$refs.box.innerHTML = info.goods_desc;
+        this.productList = productList;
       }
     });
+    // 获取购物车总数量
+    GetCartGoodsCountAPI().then((res) => {
+      if (res.errno == 0) {
+        this.cartLanObj.badge = res.data.cartTotal.goodsCount;
+      }
+    });
+  },
+  methods: {
+    // 跳转到购物车
+    GoToCart(){
+      this.$router.push("/cart")
+    },
+    // 点击加入购物车
+    addToCartFn() {
+      if (this.ifShowSku) {
+        AddToCartAPI({
+          goodsId: this.$route.params.id,
+          productId: this.productList[0].id,
+          number: this.stepValue,
+        }).then((res) => {
+          if (res.errno == 0) {
+            console.log(res);
+            this.cartLanObj.badge = res.data.cartTotal.goodsCount;
+          }
+        });
+        this.ifShowSku = !this.ifShowSku;
+      } else {
+        this.ifShowSku = !this.ifShowSku;
+      }
+    },
+    buyNo() {
+      this.$toast("该功能暂未开放");
+    },
   },
 };
 </script>
@@ -138,48 +191,48 @@ export default {
     display: block;
   }
 }
-.modal{
-    position: fixed;
-    z-index: 999;
+.modal {
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  /* calc是css中用来计算不同单位的方法，减号前后要空格 */
+  height: calc(100vh - 50px);
+  .modal_bg {
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+  }
+  .modal_content {
+    position: absolute;
     left: 0;
-    top: 0;
-    width: 100vw;
-    /* calc是css中用来计算不同单位的方法，减号前后要空格 */
-    height: calc(100vh - 50px);
-    .modal_bg{
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
+    bottom: 0;
+    width: 100%;
+    background: #fff;
+    padding: 20px 4%;
+    box-sizing: border-box;
+    .top {
+      display: flex;
+      height: 50px;
+      line-height: 50px;
+      .right {
+        margin-left: 10px;
+        flex: 1;
+      }
     }
-    .modal_content{
-        position: absolute;
-        left: 0;
-        bottom: 0;
-        width: 100%;
-        background: #fff;
-        padding: 20px 4%;
-        box-sizing: border-box;
-        .top{
-            display: flex;
-            height: 50px;
-            line-height: 50px;
-            .right{
-                margin-left: 10px;
-                flex: 1;
-            }
-        }
-        .close{
-            position: absolute;
-            right: 10px;
-            top: 10px;
-        }
-        .down{
-            margin-top: 50px;
-            h3{
-                height: 50px;
-                line-height: 50px;
-            }
-        }
+    .close {
+      position: absolute;
+      right: 10px;
+      top: 10px;
     }
+    .down {
+      margin-top: 50px;
+      h3 {
+        height: 50px;
+        line-height: 50px;
+      }
+    }
+  }
 }
 </style>

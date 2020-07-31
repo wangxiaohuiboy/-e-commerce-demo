@@ -67,4 +67,7 @@ export default {
       }
   }
 }
+.van-swipe-item{
+  margin-right: -15px;
+}
 </style>

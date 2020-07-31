@@ -25,7 +25,13 @@ export const GetProductAPI = (params) => request.get("/goods/list", { params });
 // 产品明细
 export const GetdetailAPI = (params) => request.get("/goods/detail", { params });
 // 品牌详情
-export const GetLBranDtailsAPI = (params) => request.get("/brand/detail",{params})
+export const GetLBranDtailsAPI = (params) => request.get("/brand/detail", { params })
 // 品牌详情中的产品列表
-export const GetBranDetailsGoodlistAPI = (params) => request.get("/goods/list",{params})
+export const GetBranDetailsGoodlistAPI = (params) => request.get("/goods/list", { params })
+// 获取购物车产品数量
+export const GetCartGoodsCountAPI = () => request.get("/cart/goodscount")
+// 加入购物车
+export const AddToCartAPI = (params) => request.post("/cart/add", params)
+// 获取购物车数据
+export const GetCartDataAPI = (params) => request.get("/cart/index", { params })
 
