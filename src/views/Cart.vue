@@ -2,20 +2,39 @@
   <div style="padding-bottom:150px">
     <Safeguard></Safeguard>
     <van-checkbox-group v-model="result" ref="checkboxGroup">
-      <van-checkbox name="a" v-for="item in 10" :key="item">
-        <van-card
-          num="2"
-          price="2.00"
-          desc="描述信息"
-          title="商品标题"
-          thumb="https://img.yzcdn.cn/vant/ipad.jpeg"
-        />
+      <van-checkbox
+        :name="item.id"
+        @click="checkboxClick(item)"
+        v-for="item in cartList"
+        :key="item.id"
+        :disabled="editStatus"
+      >
+        <van-swipe-cell>
+          <van-card
+            :num="item.number"
+            :price="item.retail_price.toFixed(2)"
+            :title="item.goods_name"
+            :thumb="item.list_pic_url"
+          >
+            <template #footer>
+              <van-stepper
+                v-model="item.number"
+                v-if="editStatus"
+                @change="stepChange(item)"
+                min="1"
+              />
+            </template>
+          </van-card>
+          <template #right>
+            <van-button square text="删除" type="danger" class="delete-button" @click="delProduct(item.product_id)" />
+          </template>
+        </van-swipe-cell>
       </van-checkbox>
     </van-checkbox-group>
-    <van-submit-bar :price="3050" button-text="提交订单" @submit="onSubmit">
-      <van-checkbox v-model="checkAll">全选</van-checkbox>
+    <van-submit-bar :price="cartTotal.checkedGoodsAmount*100" button-text="提交订单" @submit="onSubmit">
+      <van-checkbox v-model="checkAll" @click="checkAllFn">全选</van-checkbox>
       <template #tip>
-        累计共613件商品，可点击
+        累计共{{cartList.length}}件商品，可点击
         <van-button
           :type="editStatus?'danger':'primary'"
           size="small"
@@ -28,21 +47,20 @@
  
 <script>
 import Safeguard from "@/components/Safeguard";
-import { GetCartDataAPI } from "@/request/api";
+import { GetCartDataAPI, SelectedGoodsAPI, StepAPI,DeleteCart } from "@/request/api";
 export default {
   components: {
     Safeguard,
   },
   created() {
     GetCartDataAPI().then((res) => {
-      let { cartList, cartTotal } = res.data;
-      this.cartList = cartList;
-      this.cartTotal = cartTotal;
-      console.log(res.data);
+      this.totalFn(res.data);
+      console.log(res);
     });
   },
   data() {
     return {
+      value: 1,
       //购物车数组列表
       cartList: [],
       //购物车总数据
@@ -51,12 +69,80 @@ export default {
       result: ["a"],
       //全选
       checkAll: false,
-    // 编辑按钮切换
-      editStatus:false,
+      // 编辑按钮切换
+      editStatus: false,
     };
   },
   methods: {
     onSubmit() {},
+    // 复选框点击事件
+    checkboxClick(item) {
+      let arr = [];
+      arr.push(item.product_id);
+      //editStatus为真，表示显示步进器，此时阻止当前复选框点击事件
+      if (this.editStatus) {
+        return;
+      } else {
+        SelectedGoodsAPI({
+          isChecked: item.checked ? 0 : 1,
+          productIds: arr.join(),
+        }).then((res) => {
+          this.totalFn(res.data);
+        });
+      }
+    },
+    // 步进器点击事件
+    stepChange(item) {
+      console.log(item);
+      StepAPI({
+        goodsId: item.goods_id,
+        id: item.id,
+        number: item.number,
+        productId: item.product_id,
+      }).then((res) => {
+        this.totalFn(res.data);
+      });
+    },
+    // 封装一个公用的函数
+    totalFn(obj) {
+      let { cartList, cartTotal } = obj;
+      this.cartList = cartList;
+      this.cartTotal = cartTotal;
+      this.result = [];
+      cartList.forEach((el) => {
+        if (el.checked == 1) {
+          this.result.push(el.id);
+        } else {
+          this.result.push("");
+        }
+      });
+      // 全选和反选
+      this.checkAll = this.cartTotal.checkedGoodsCount = this.cartTotal.goodsCount;
+    },
+    // 点击了全选和取消
+    checkAllFn() {
+      console.log("123");
+      let arr = [];
+      this.cartList.map((val) => {
+        arr.push(val.product_id);
+      });
+      SelectedGoodsAPI({
+        isChecked: this.checkAll ? 1 : 0,
+        productIds: arr.join(),
+      }).then((res) => {
+        if (res.errno == 0) {
+          this.totalFn(res.data);
+        }
+      });
+    },
+    // 删除商品
+    delProduct(id){
+      DeleteCart({
+        productIds:id.toString()
+      }).then(res=>{
+        this.totalFn(res.data);
+      })
+    }
   },
 };
 </script>
@@ -75,5 +161,11 @@ export default {
 .van-submit-bar {
   bottom: 49px;
   border-bottom: 1px solid #ccc;
+}
+.van-swipe-cell__right{
+  .van-button{
+    height: 100%;
+    margin-left: 1px;
+  }
 }
 </style>

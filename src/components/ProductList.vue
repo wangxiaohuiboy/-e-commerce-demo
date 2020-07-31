@@ -49,7 +49,7 @@ export default {
       white-space: nowrap;
     }
     p {
-      color: #ff0000;
+      color: #4FC08D;
     }
   }
 }

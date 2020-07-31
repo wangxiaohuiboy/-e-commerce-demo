@@ -34,4 +34,9 @@ export const GetCartGoodsCountAPI = () => request.get("/cart/goodscount")
 export const AddToCartAPI = (params) => request.post("/cart/add", params)
 // 获取购物车数据
 export const GetCartDataAPI = (params) => request.get("/cart/index", { params })
-
+// 选中商品接口（含全选）
+export const SelectedGoodsAPI = (params) =>request.post("/cart/checked",params);
+// 商品步进器
+export const StepAPI = (params) => request.post("/cart/update",params);
+// 删除商品
+export const DeleteCart = (params) => request.post("/cart/delete",params);

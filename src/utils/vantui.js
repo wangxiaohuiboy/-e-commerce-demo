@@ -1,6 +1,6 @@
 import Vue from 'vue';
 
-import { Search, Button, Swipe, SwipeItem, Grid, GridItem, Icon, Tag, Toast, DropdownMenu, DropdownItem, Image as VanImage, List, Cell, Empty, Tabbar, TabbarItem, Card, Pagination, Form, Field, Tab, Tabs,Col, Row, GoodsAction,GoodsActionIcon, GoodsActionButton,Stepper,Checkbox, CheckboxGroup,SubmitBar  } from 'vant';
+import { Search, Button, Swipe, SwipeItem, Grid, GridItem, Icon, Tag, Toast, DropdownMenu, DropdownItem, Image as VanImage, List, Cell, Empty, Tabbar, TabbarItem, Card, Pagination, Form, Field, Tab, Tabs,Col, Row, GoodsAction,GoodsActionIcon, GoodsActionButton,Stepper,Checkbox, CheckboxGroup,SubmitBar,SwipeCell  } from 'vant';
 
 Vue.use(Search);
 Vue.use(Button);
@@ -34,3 +34,4 @@ Vue.use(Stepper);
 Vue.use(Checkbox);
 Vue.use(CheckboxGroup);
 Vue.use(SubmitBar);
+Vue.use(SwipeCell);
