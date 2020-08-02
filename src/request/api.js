@@ -35,8 +35,14 @@ export const AddToCartAPI = (params) => request.post("/cart/add", params)
 // 获取购物车数据
 export const GetCartDataAPI = (params) => request.get("/cart/index", { params })
 // 选中商品接口（含全选）
-export const SelectedGoodsAPI = (params) =>request.post("/cart/checked",params);
+export const SelectedGoodsAPI = (params) => request.post("/cart/checked", params);
 // 商品步进器
-export const StepAPI = (params) => request.post("/cart/update",params);
+export const StepAPI = (params) => request.post("/cart/update", params);
 // 删除商品
-export const DeleteCart = (params) => request.post("/cart/delete",params);
+export const DeleteCart = (params) => request.post("/cart/delete", params);
+// 相关产品
+export const RelatedProducts = (params) => request.get("/goods/related", { params });
+// 全部分类数据接口
+export const AllCategoriesAPI = () => request.get("/catalog/index");
+// 获取当前分类数据
+export const GetCurrentCategoryAPI = (params) => request.get("/catalog/current", { params });

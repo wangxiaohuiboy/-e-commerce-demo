@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="padding-bottom:40px">
     <van-swipe class="my-swipe" :autoplay="3000" indicator-color="skyblue">
       <van-swipe-item v-for="item in gallery" :key="item.id">
         <img :src="item.img_url" width="100%" style="display:block" alt />
@@ -22,6 +22,28 @@
       </ul>
     </div>
     <div class="box" ref="box"></div>
+    <div class="issue">
+      <div class="mytitle">
+        <h3>常见问题</h3>
+        <span></span>
+      </div>
+      <ul>
+        <li v-for="item in issue" :key="item.id">
+          <h3>
+            <i></i>
+            {{item.question}}
+          </h3>
+          <div>{{item.answer}}</div>
+        </li>
+      </ul>
+    </div>
+    <div class="alllook">
+      <div class="mytitle">
+        <h3>大家都在看</h3>
+        <span></span>
+      </div>
+      <ProductList :goodList="goodsList" />
+    </div>
     <van-goods-action>
       <van-goods-action-icon
         :icon="cartLanObj.ifCollect?'star':'star-o'"
@@ -55,14 +77,17 @@
  
 <script>
 import Safeguard from "@/components/Safeguard";
+import ProductList from "@/components/ProductList";
 import {
   GetdetailAPI,
   GetCartGoodsCountAPI,
   AddToCartAPI,
+  RelatedProducts,
 } from "@/request/api";
 export default {
   components: {
     Safeguard,
+    ProductList,
   },
   data() {
     return {
@@ -83,6 +108,10 @@ export default {
       },
       // productList
       productList: [],
+      // 常见问题
+      issue: [],
+      // 相关产品
+      goodsList: [],
     };
   },
   created() {
@@ -90,12 +119,13 @@ export default {
       id: this.$route.params.id,
     }).then((res) => {
       if (res.errno == 0) {
-        let { gallery, info, attribute, productList } = res.data;
+        let { gallery, info, attribute, productList, issue } = res.data;
         this.gallery = gallery;
         this.info = info;
         this.attribute = attribute;
         this.$refs.box.innerHTML = info.goods_desc;
         this.productList = productList;
+        this.issue = issue;
       }
     });
     // 获取购物车总数量
@@ -104,11 +134,30 @@ export default {
         this.cartLanObj.badge = res.data.cartTotal.goodsCount;
       }
     });
+    // 相关产品
+    RelatedProducts({
+      id: this.$route.params.id,
+    }).then((res) => {
+      if (res.errno == 0) {
+        let { goodsList } = res.data;
+        this.goodsList = goodsList;
+      }
+    });
+  },
+  // 监听路由
+  watch: {
+    $route: function (to, from) {
+      console.log(to.path,from.path);
+      if(to.path!=from.path){
+        window.location.reload();
+        window.scrollTo(0,0);
+      }
+    },
   },
   methods: {
     // 跳转到购物车
-    GoToCart(){
-      this.$router.push("/cart")
+    GoToCart() {
+      this.$router.push("/cart");
     },
     // 点击加入购物车
     addToCartFn() {
@@ -119,7 +168,6 @@ export default {
           number: this.stepValue,
         }).then((res) => {
           if (res.errno == 0) {
-            console.log(res);
             this.cartLanObj.badge = res.data.cartTotal.goodsCount;
           }
         });
@@ -193,7 +241,6 @@ export default {
 }
 .modal {
   position: fixed;
-  z-index: 999;
   left: 0;
   top: 0;
   width: 100vw;
@@ -234,5 +281,70 @@ export default {
       }
     }
   }
+}
+.mytitle {
+  background: #fff;
+  position: relative;
+  height: 50px;
+  h3 {
+    width: 30%;
+    position: absolute;
+    background: #fff;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    text-align: center;
+    line-height: 50px;
+    font-size: 14px;
+    color: #000;
+    z-index: 999;
+  }
+  span {
+    width: 50%;
+    height: 2px;
+    background: #ccc;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+  }
+}
+.issue {
+  background: #fff;
+
+  ul {
+    padding: 0 4%;
+    h3 {
+      position: relative;
+      padding-left: 20px;
+      margin-bottom: 10px;
+      i {
+        width: 4px;
+        height: 4px;
+        background: #4fc08d;
+        position: absolute;
+        top: 50%;
+        left: 0;
+        margin-top: -2px;
+        border-radius: 5px;
+      }
+    }
+    div {
+      padding-left: 20px;
+      color: #666;
+      font-size: 12px;
+      padding-bottom: 10px;
+    }
+  }
+}
+.alllook {
+  background: #fff;
+}
+.van-goods-action {
+  z-index: 9999;
 }
 </style>

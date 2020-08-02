@@ -37,7 +37,13 @@ const routes = [
     component: () => import("@/views/Category.vue"),
     meta: {
       num: 2
-    }
+    },
+    children: [
+      {
+        path: 'popup',
+        component: () => import('@/components/popup/Index.vue')
+      }
+    ]
   },
   {
     path: "/cart",
